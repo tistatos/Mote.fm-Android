@@ -10,8 +10,11 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.spotify.sdk.android.playback.Player;
+
 public class WebIntent extends Activity {
 
+	private Player mPlayer;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -1,12 +1,19 @@
 package com.example.tistatos.test;
 
 import android.app.Activity;
-import android.os.Bundle;
-import android.widget.TextView;
-import android.graphics.Typeface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
+import android.graphics.Typeface;
+import com.example.tistatos.test.websocketrails.WebSocketRailsChannel;
+import com.example.tistatos.test.websocketrails.WebSocketRailsDataCallback;
+import com.example.tistatos.test.websocketrails.WebSocketRailsDispatcher;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.LinkedHashMap;
 
 import com.spotify.sdk.android.Spotify;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
@@ -25,7 +32,6 @@ public class MyActivity extends Activity implements
     private static final String REDIRECT_URI = "eriktest://mahtest";
 
     private Player mPlayer;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +44,56 @@ public class MyActivity extends Activity implements
         partyTitle.setTypeface(latoRegular);
 
         SpotifyAuthentication.openAuthWindow(CLIENT_ID, "token", REDIRECT_URI,
-                new String[]{"user-read-private", "streaming"}, null, this);
+               new String[]{"user-read-private", "streaming"}, null, this);
     }
+
+    private boolean connectWebsocket()
+    {
+        WebSocketRailsDispatcher mDispatcher;
+
+        try
+        {
+            mDispatcher = new WebSocketRailsDispatcher(new URL("http://10.0.2.2:3000/websocket"));
+        }
+        catch (MalformedURLException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        mDispatcher.connect();
+        WebSocketRailsChannel channel = mDispatcher.subscribe("messages");
+        channel.bind("update_chat",new WebSocketRailsDataCallback() {
+            @Override
+            public void onDataAvailable(Object data) {
+                LinkedHashMap<String,String> jek = (LinkedHashMap<String,String>)data;
+                Log.e("mote", jek.get("nickname") + " " + jek.get("message") );
+            }
+        });
+
+        LinkedHashMap<String,String> msgdata = new LinkedHashMap<String, String>();
+        msgdata.put("nickname", "android");
+        msgdata.put("body", "android can chat too");
+
+        LinkedHashMap<String,Object> data = new LinkedHashMap<String, Object>();
+        data.put("data",msgdata);
+
+        mDispatcher.trigger("message",data,new WebSocketRailsDataCallback() {
+            @Override
+            public void onDataAvailable(Object data) {
+                Log.e("trigger","YES");
+            }
+        },
+        new WebSocketRailsDataCallback() {
+            @Override
+            public void onDataAvailable(Object data) {
+                Log.e("trigger","NOPE");
+
+            }
+        });
+        return true;
+    }
+
+
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -53,8 +107,8 @@ public class MyActivity extends Activity implements
                 public void onInitialized() {
                     mPlayer.addConnectionStateCallback(MyActivity.this);
                     mPlayer.addPlayerNotificationCallback(MyActivity.this);
-                    //mPlayer.play("spotify:track:1DAs+hXYxxLHC6otfko4Djs");
-
+                    mPlayer.play("spotify:track:1DAs+hXYxxLHC6otfko4Djs");
+                    //connectWebsocket();
                 }
 
                 @Override

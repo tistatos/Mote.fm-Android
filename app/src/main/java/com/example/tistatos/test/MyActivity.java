@@ -8,12 +8,19 @@ import android.util.Log;
 import android.widget.TextView;
 import android.graphics.Typeface;
 
+import com.example.tistatos.test.websocketrails.WebSocketRailsChannel;
+import com.example.tistatos.test.websocketrails.WebSocketRailsDataCallback;
+import com.example.tistatos.test.websocketrails.WebSocketRailsDispatcher;
 import com.spotify.sdk.android.Spotify;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.spotify.sdk.android.playback.ConnectionStateCallback;
 import com.spotify.sdk.android.playback.Player;
 import com.spotify.sdk.android.playback.PlayerNotificationCallback;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.LinkedHashMap;
 
 
 public class MyActivity extends Activity implements

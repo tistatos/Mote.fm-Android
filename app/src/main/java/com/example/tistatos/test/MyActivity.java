@@ -7,13 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.graphics.Typeface;
-import com.example.tistatos.test.websocketrails.WebSocketRailsChannel;
-import com.example.tistatos.test.websocketrails.WebSocketRailsDataCallback;
-import com.example.tistatos.test.websocketrails.WebSocketRailsDispatcher;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.LinkedHashMap;
 
 import com.spotify.sdk.android.Spotify;
 import com.spotify.sdk.android.authentication.SpotifyAuthentication;
@@ -53,7 +46,7 @@ public class MyActivity extends Activity implements
 
         try
         {
-            mDispatcher = new WebSocketRailsDispatcher(new URL("http://10.0.2.2:3000/websocket"));
+            mDispatcher = new WebSocketRailsDispatcher(new URL("http://192.168.0.109:3000/websocket"));
         }
         catch (MalformedURLException e)
         {
@@ -61,12 +54,15 @@ public class MyActivity extends Activity implements
             return false;
         }
         mDispatcher.connect();
+
         WebSocketRailsChannel channel = mDispatcher.subscribe("messages");
         channel.bind("update_chat",new WebSocketRailsDataCallback() {
             @Override
             public void onDataAvailable(Object data) {
                 LinkedHashMap<String,String> jek = (LinkedHashMap<String,String>)data;
                 Log.e("mote", jek.get("nickname") + " " + jek.get("message") );
+                mPlayer.clearQueue();
+                mPlayer.queue(jek.get("message"));
             }
         });
 
@@ -102,13 +98,16 @@ public class MyActivity extends Activity implements
         if (uri != null) {
             AuthenticationResponse response = SpotifyAuthentication.parseOauthResponse(uri);
             Spotify spotify = new Spotify(response.getAccessToken());
+
+            //FIXME: Doesnt work on emulator!
             mPlayer = spotify.getPlayer(this, "My Company Name", this, new Player.InitializationObserver() {
                 @Override
                 public void onInitialized() {
                     mPlayer.addConnectionStateCallback(MyActivity.this);
                     mPlayer.addPlayerNotificationCallback(MyActivity.this);
-                    mPlayer.play("spotify:track:1DAs+hXYxxLHC6otfko4Djs");
-                    //connectWebsocket();
+                    mPlayer.play("spotify:track:1DAshXYxxLHC6otfko4Djs");
+                    connectWebsocket();
+                    Log.d("MainActivity", "playing music");
                 }
 
                 @Override

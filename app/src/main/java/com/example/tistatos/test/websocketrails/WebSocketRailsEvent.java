@@ -1,5 +1,6 @@
 package com.example.tistatos.test.websocketrails;
 
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -131,16 +132,8 @@ public class WebSocketRailsEvent {
 		return attr;
 	}
 	
-	public void setAttr(Map<String, Object> attr) {
-		this.attr = attr;
-	}
-	
 	public Integer getId() {
 		return id;
-	}
-	
-	public void setId(Integer id) {
-		this.id = id;
 	}
 	
 	public String getChannel() {
@@ -163,16 +156,8 @@ public class WebSocketRailsEvent {
 		return connectionId;
 	}
 	
-	public void setConnectionId(String connectionId) {
-		this.connectionId = connectionId;
-	}
-	
 	public boolean isSuccess() {
 		return success;
-	}
-	
-	public void setSuccess(boolean success) {
-		this.success = success;
 	}
 	
 	public boolean isChannel() {

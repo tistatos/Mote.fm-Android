@@ -17,6 +17,10 @@ public class MoteSocketManager{
     private URL mServerURL; //mote.fm server
     private String mPartyID; //party channel
 
+    /**
+     * public constructor
+     * @param wsServerURL url to connect socket to
+     */
     public MoteSocketManager(String wsServerURL)
     {
         try
@@ -29,6 +33,10 @@ public class MoteSocketManager{
         }
     }
 
+    /**
+     * connect socket to server
+     * @return always true
+     */
     public boolean connect()
     {
         mSocket = new WebSocketRailsDispatcher(mServerURL);
@@ -36,22 +44,40 @@ public class MoteSocketManager{
         return true;
     }
 
+    /**
+     * get state of socket
+     * @return state of socket
+     */
     public String getState()
     {
         return mSocket.getState();
     }
 
+    /**
+     * subscribe socket to party
+     * @param partyID id of party
+     */
     public void SubscribeToParty(String partyID)
     {
         mPartyID = partyID;
         mPartyChannel = mSocket.subscribe(partyID);
     }
 
+    /**
+     * Trigger an event in party channel and listen on reply
+     * @param event the name of the event
+     * @param callback callback for the event
+     */
     public void triggerEvent(String event, WebSocketRailsDataCallback callback)
     {
         mSocket.trigger(event,"",callback,null);
     }
 
+    /**
+     * add constant callback function to event from server
+     * @param trigger the event name to trigger the callback
+     * @param callback callback for this event
+     */
     public void AddCallback(String trigger, WebSocketRailsDataCallback callback)
     {
         mPartyChannel.bind(trigger,callback);

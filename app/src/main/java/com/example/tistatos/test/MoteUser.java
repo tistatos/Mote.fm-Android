@@ -9,6 +9,10 @@ public class MoteUser
     private String mUserPic;
     private String mUserName;
 
+    /**
+     * public constructor
+     * @param moteID id of user
+     */
     public MoteUser(String moteID)
     {
         mMoteID = moteID;
@@ -17,6 +21,11 @@ public class MoteUser
     }
 
     //FIXME: Should this be string?
+
+    /**
+     * get string to user's picture
+     * @return url to user pic
+     */
     public String getUserPicture()
     {
         if(mUserPic != "" )
@@ -25,6 +34,10 @@ public class MoteUser
         return "not implemented";
     }
 
+    /**
+     * get user's name
+     * @return the name
+     */
     public String getUserName()
     {
         if(mUserName != "" )

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Mote.fm</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_mote_fm_party_list">"Mote.fm party list"</string>
     <string name="title_activity_mote_fm_party_view">"Mote.fm Party"</string>
-
+    <string name="email">"Email"</string>
+    <string name="password">"Password"</string>
+    <string name="login">"Login"</string>
 </resources>

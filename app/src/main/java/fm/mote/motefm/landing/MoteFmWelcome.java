@@ -2,7 +2,6 @@ package fm.mote.motefm.landing;
 
 import fm.mote.motefm.R;
 import fm.mote.motefm.party.MoteFmPartyList;
-import fm.mote.motefm.util.SystemUiHider;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -36,6 +35,7 @@ import java.util.Map;
 
 public class MoteFmWelcome extends Activity {
     static final String APP_TOKEN = "75d13339880c3a190cf36690574f9da5";
+    static final String SERVER_URL = "http://10.0.2.2:3001";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +118,7 @@ public class MoteFmWelcome extends Activity {
             request.put("user", users);
 
             String json = new GsonBuilder().create().toJson(request, Map.class);
-            HttpResponse resp = makeRequest("http://130.236.112.148:3001/v1/users/sign_in.json", json);
+            HttpResponse resp = makeRequest(SERVER_URL+"/v1/users/sign_in.json", json);
             StatusLine status = resp.getStatusLine();
             if(status.getStatusCode() == 200)
             {

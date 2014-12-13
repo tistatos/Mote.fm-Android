@@ -42,6 +42,7 @@ public class MoteFmPartyList extends Activity {
 
         user.setText("Welcome, " + username);
 
+
         String[] parties = new String[] { "Testing Party #1", "Testing party #2"};
 
         ArrayList<String> list = new ArrayList<String>();

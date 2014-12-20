@@ -1,5 +1,6 @@
 package fm.mote.motefm.party;
 
+import fm.mote.motefm.V1.APIRequests;
 import fm.mote.motefm.util.SystemUiHider;
 
 import android.annotation.TargetApi;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,57 +38,28 @@ public class MoteFmPartyList extends Activity {
         setContentView(R.layout.activity_mote_fm_party_list);
 
 
-        TextView user = (TextView) findViewById(R.id.txtv_welcome_user);
+        TextView userText = (TextView) findViewById(R.id.txtv_welcome_user);
         ListView view = (ListView) findViewById(R.id.lst_party);
-        String username = getIntent().getStringExtra("username");
+        APIRequests.UserLoginResponse user= (APIRequests.UserLoginResponse)getIntent().getExtras().getSerializable("user");
 
-        user.setText("Welcome, " + username);
-
-
-        String[] parties = new String[] { "Testing Party #1", "Testing party #2"};
-
-        ArrayList<String> list = new ArrayList<String>();
-        for(int i = 0; i < parties.length; i++)
-        {
-            list.add(parties[i]);
-        }
+        userText.setText("Welcome, " + user.user.name);
 
 
-        StableArrayAdapter adapter = new StableArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, list);
+
+
+        List<APIRequests.Party> list = user.user.parties;
+
+        PartyAdapter adapter = new PartyAdapter(this, list);
         view.setAdapter(adapter);
-
+        view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                APIRequests.Party party = (APIRequests.Party)adapterView.getItemAtPosition(i);
+            }
+        })
     }
 
     @Override
     public void onBackPressed() {
-    }
-
-    private class StableArrayAdapter extends ArrayAdapter<String>
-    {
-        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
-
-        public StableArrayAdapter(Context context, int textViewResourceId, List<String> objects)
-        {
-            super(context, textViewResourceId, objects);
-
-            for(int i = 0; i < objects.size(); i++)
-            {
-                mIdMap.put(objects.get(i), i);
-            }
-
-        }
-
-        @Override
-        public long getItemId(int position)
-        {
-            String item = getItem(position);
-            return mIdMap.get(item);
-        }
-
-        @Override
-        public boolean hasStableIds()
-        {
-            return true;
-        }
     }
 }

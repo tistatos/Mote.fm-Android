@@ -23,12 +23,6 @@ import java.util.List;
 
 import fm.mote.motefm.R;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
- */
 public class MoteFmPartyList extends Activity {
 
     @Override
@@ -37,18 +31,12 @@ public class MoteFmPartyList extends Activity {
 
         setContentView(R.layout.activity_mote_fm_party_list);
 
-
         TextView userText = (TextView) findViewById(R.id.txtv_welcome_user);
         ListView view = (ListView) findViewById(R.id.lst_party);
         APIRequests.UserLoginResponse user= (APIRequests.UserLoginResponse)getIntent().getExtras().getSerializable("user");
-
         userText.setText("Welcome, " + user.user.name);
 
-
-
-
         List<APIRequests.Party> list = user.user.parties;
-
         PartyAdapter adapter = new PartyAdapter(this, list);
         view.setAdapter(adapter);
         view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -56,7 +44,7 @@ public class MoteFmPartyList extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 APIRequests.Party party = (APIRequests.Party)adapterView.getItemAtPosition(i);
             }
-        })
+        });
     }
 
     @Override

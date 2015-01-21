@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="fm.mote.motefm" >
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".landing.MoteFmWelcome"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".party.MoteFmPartyList"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_mote_fm_party_list"
+            android:theme="@android:style/Theme.Black.NoTitleBar">
+        </activity>
+        <activity
+            android:name=".party.MoteFmPartyView"
+            android:launchMode="singleInstance"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_mote_fm_party_view"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="mahtest"
+                    android:scheme="eriktest"/>
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

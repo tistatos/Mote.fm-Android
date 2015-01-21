@@ -1,0 +1,8 @@
+<resources>
+    <color name="mote_blue">#29253E</color>
+    <color name="mote_yellow">#FFDD3E</color>
+    <color name="mote_dark_grey">#514C53</color>
+    <color name="mote_grey">#9D9D9D</color>
+    <color name="mote_green">#7A9E85</color>
+    <color name="mote_beige">#CEC0B3</color>
+</resources>

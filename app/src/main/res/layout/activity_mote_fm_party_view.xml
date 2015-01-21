@@ -31,7 +31,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Party name"
                 android:textSize="36sp"
-                android:id="@+id/textView3"
+                android:id="@+id/party_name"
                 android:typeface="sans" />
 
             <TextView
@@ -40,7 +40,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="mote.fm/HASCH"
                 android:textSize="24sp"
-                android:id="@+id/textView4" />
+                android:id="@+id/party_hash" />
 
         </LinearLayout>
 
@@ -54,5 +54,10 @@
             android:layout_weight="1" />
 
     </LinearLayout>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tracklist" />
 
 </LinearLayout>

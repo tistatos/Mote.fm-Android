@@ -35,7 +35,7 @@ public class MoteFmWelcome extends Activity {
         login.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 //Send login request to server
-                APIRequests.UserLoginResponse user = login();
+                APIRequests.APIResponse user = login();
                 if(user != null)
                 {
                     Intent partyList = new Intent(getBaseContext(), MoteFmPartyList.class);
@@ -51,7 +51,7 @@ public class MoteFmWelcome extends Activity {
         });
     }
 
-    private APIRequests.UserLoginResponse login()
+    private APIRequests.APIResponse login()
     {
         String email = ((EditText) findViewById(R.id.txt_user)).getText().toString();
         String password= ((EditText) findViewById(R.id.txt_password)).getText().toString();
@@ -60,7 +60,8 @@ public class MoteFmWelcome extends Activity {
 
     private String getLoginError()
     {
-        String error =  "Error Logging in";
+        String error;
+        error = APIRequests.getErrorMessage();
         return "Error: " + error;
     }
 }

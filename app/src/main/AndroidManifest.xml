@@ -28,9 +28,20 @@
         </activity>
         <activity
             android:name=".party.MoteFmPartyView"
+            android:launchMode="singleInstance"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_mote_fm_party_view"
             android:theme="@android:style/Theme.Black.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                    android:host="mahtest"
+                    android:scheme="eriktest"/>
+            </intent-filter>
         </activity>
     </application>
 

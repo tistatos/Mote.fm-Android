@@ -1,15 +1,16 @@
 package fm.mote.motefm.V1;
 
-import android.text.AndroidCharacter;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -27,8 +28,100 @@ import java.util.Map;
  */
 public class APIRequests {
     private static final String API_URL = "http://10.0.2.2:3001";
+    private static String errorMessage = "";
 
-    private static String sendRequest(String url, String jsondata)
+    private static String sendAuthedPostRequest(String url, APIResponse user, String jsondata)
+    {
+        try{
+            HttpPost httpPost = new HttpPost(API_URL + "/" + url);
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("X-User-Email", user.user.email);
+            httpPost.setHeader("X-User-Token", user.application.authenticationToken);
+            httpPost.setHeader("X-User-App", user.application.applicationToken);
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setEntity(new StringEntity(jsondata));
+
+            HttpResponse response = new DefaultHttpClient().execute(httpPost);
+
+            StatusLine status = response.getStatusLine();
+
+            if(status.getStatusCode() == 200) {
+                String jsonReply = "";
+                try {
+                    jsonReply = EntityUtils.toString(response.getEntity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.d("mote_debug", jsonReply);
+                return jsonReply;
+            }
+            else
+            {
+                try {
+                    errorMessage = EntityUtils.toString(response.getEntity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+
+    }
+
+    private static String sendAuthedGetRequest(String url, APIResponse user, String json)
+    {
+        try {
+            HttpGet httpGet = new HttpGet(API_URL + "/" + url);
+            httpGet.setHeader("X-User-Email", user.user.email);
+            httpGet.setHeader("X-User-Token", user.application.authenticationToken);
+            httpGet.setHeader("X-User-App", user.application.applicationToken);
+            httpGet.setHeader("Content-type", "application/json");
+            httpGet.setHeader("Accept", "application/json");
+
+            HttpResponse response = new DefaultHttpClient().execute(httpGet);
+
+            StatusLine status = response.getStatusLine();
+
+            if(status.getStatusCode() == 200) {
+                String jsonReply = "";
+                try {
+                    jsonReply = EntityUtils.toString(response.getEntity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Log.d("mote_debug", jsonReply);
+                return jsonReply;
+            }
+            else
+            {
+                try {
+                    errorMessage = EntityUtils.toString(response.getEntity());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static String sendPostRequest(String url, String jsondata)
     {
         try {
             HttpPost httpPost = new HttpPost(API_URL + "/" + url);
@@ -50,6 +143,15 @@ public class APIRequests {
                 Log.d("motedebug", jsonReply);
                 return jsonReply;
             }
+            else
+            {
+                try {
+                    errorMessage = EntityUtils.toString(response.getEntity());
+                    Log.d("motedebug", errorMessage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             return null;
 
         } catch (UnsupportedEncodingException e) {
@@ -61,7 +163,7 @@ public class APIRequests {
         }
         return null;
     }
-    public static UserLoginResponse loginRequest(String email, String password)
+    public static APIResponse loginRequest(String email, String password)
     {
         Map<String, Map<String, String> > request = new HashMap<String, Map<String, String> >();
         Map<String, String> data = new HashMap<String, String>();
@@ -70,94 +172,181 @@ public class APIRequests {
         data.put("password", password);
 
         request.put("user", data);
-        String json = new GsonBuilder().create().toJson(request,Map.class);
+        ObjectMapper om = new ObjectMapper();
 
-        String response = sendRequest("/v1/users/sign_in.json",json);
-        UserLoginResponse loginResponse = new Gson().fromJson(response, UserLoginResponse.class);
-        return loginResponse;
+
+        String json = null;
+        try {
+            json = om.writer().writeValueAsString(request);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        String response = sendPostRequest("v1/users/sign_in.json",json);
+        APIResponse login = null;
+
+        try {
+            login = om.readValue(response, new TypeReference<APIResponse>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return login;
     }
 
-    public class UserLoginResponse implements Serializable
+    public static APIPartyResponse getPartyByHash(String hash, APIResponse user)
     {
-        @SerializedName("user")
+        String response = sendAuthedGetRequest("v1/parties/" + hash + ".json",user , "");
+
+        ObjectMapper om = new ObjectMapper();
+        APIPartyResponse party = null;
+        try {
+            party = om.readValue(response, new TypeReference<APIPartyResponse>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return party;
+
+    }
+
+    public static APIPartyResponse createParty(String partyName, APIResponse user)
+    {
+        Map<String, Map<String, String> > request = new HashMap<String, Map<String, String> >();
+        Map<String, String> data = new HashMap<String, String>();
+        data.put("name", partyName);
+        request.put("party", data);
+
+        ObjectMapper om = new ObjectMapper();
+
+        String json = null;
+        try {
+            json = om.writer().writeValueAsString(request);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        String response = sendAuthedPostRequest("v1/parties.json",user,json);
+        APIPartyResponse party = null;
+        try {
+            party = om.readValue(response, new TypeReference<APIPartyResponse>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return party;
+    }
+
+    public static String getErrorMessage()
+    {
+        return  errorMessage;
+    }
+
+    public static class APIResponse implements Serializable
+    {
+        @JsonProperty("user")
         public UserLogin user;
-        @SerializedName("application")
+        @JsonProperty("application")
         public Application application;
-        @SerializedName("errors")
+        @JsonProperty("errors")
         public String errors;
-        @SerializedName("notes")
-        public String notes;
-        @SerializedName("success")
+        @JsonProperty("notes")
+        public boolean notes;
+        @JsonProperty("success")
         public boolean success;
     }
 
-    public class Party implements Serializable
+    public static class APIPartyResponse extends APIResponse implements Serializable
     {
-        @SerializedName("name")
+        @JsonProperty("party")
+        public Party party;
+    }
+
+    public static class Party implements Serializable
+    {
+        @JsonProperty("name")
         public String name;
-        @SerializedName("party_hash")
+        @JsonProperty("party_hash")
         public String partyHash;
-        @SerializedName("tracks")
+        @JsonProperty("tracks")
         public List<Track> tracks;
-        @SerializedName("user")
+        @JsonProperty("user")
         public User user;
     }
 
-    public class Track implements Serializable
+    public static class Track implements Serializable
     {
-        @SerializedName("id")
+        @JsonProperty("id")
         public int id;
-        @SerializedName("info")
+
+        @JsonProperty("created_at")
+        public String createdAt;
+
+        @JsonProperty("playing")
+        public int playing;
+
+        @JsonProperty("info")
         public SongInfo info;
-        @SerializedName("votes")
+
+        @JsonProperty("votes")
         public List<User> votes;
-        @SerializedName("user")
+
+        @JsonProperty("user")
         public User user;
     }
 
-    public class SongInfo implements Serializable
+    public static class SongInfo implements Serializable
     {
-        @SerializedName("track")
+        @JsonProperty("track")
         public String track;
-        @SerializedName("artist")
+
+        @JsonProperty("artist")
         public String artist;
-        @SerializedName("album")
+
+        @JsonProperty("album")
         public String album;
-        @SerializedName("album_art")
+
+        @JsonProperty("album_art")
         public String album_art;
-        @SerializedName("uri")
+
+        @JsonProperty("uri")
         public String uri;
 
     }
 
-    public class UserLogin implements Serializable
+    public static class UserLogin implements Serializable
     {
-        @SerializedName("name")
+        @JsonProperty("name")
         public String name;
-        @SerializedName("id")
+
+        @JsonProperty("id")
         public int id;
-        @SerializedName("email")
+
+        @JsonProperty("email")
         public String email;
-        @SerializedName("identities")
+
+        @JsonProperty("identities")
         public String[] identities;
-        @SerializedName("parties")
+
+        @JsonProperty("parties")
         public List<Party> parties;
     }
 
-
-    public class User implements Serializable
+    public static class User implements Serializable
     {
-        @SerializedName("name")
+        @JsonProperty("name")
         public String name;
-        @SerializedName("email")
+
+        @JsonProperty("email")
         public String email;
     }
 
-    public class Application implements Serializable
+    public static class Application implements Serializable
     {
-        @SerializedName("authentication_token")
+        @JsonProperty("authentication_token")
         public String authenticationToken;
-        @SerializedName("application_token")
+
+        @JsonProperty("application_token")
         public String applicationToken;
     }
 }
+

@@ -12,6 +12,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -52,6 +53,7 @@ public class APIRequests {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
                 Log.d("mote_debug", jsonReply);
                 return jsonReply;
             }
@@ -143,6 +145,11 @@ public class APIRequests {
                 Log.d("motedebug", jsonReply);
                 return jsonReply;
             }
+            else if(status.getStatusCode() == 401)
+            {
+                errorMessage = "Incorrect Authentication";
+                return null;
+            }
             else
             {
                 try {
@@ -152,6 +159,7 @@ public class APIRequests {
                     e.printStackTrace();
                 }
             }
+            errorMessage = "Failed to connect to server";
             return null;
 
         } catch (UnsupportedEncodingException e) {
@@ -161,6 +169,10 @@ public class APIRequests {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        catch (Exception e){
+            errorMessage = "No connection to server, server is down";
+        }
+        errorMessage = "Failed to connect to server";
         return null;
     }
     public static APIResponse loginRequest(String email, String password)
@@ -187,8 +199,9 @@ public class APIRequests {
 
         try {
             login = om.readValue(response, new TypeReference<APIResponse>() {});
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
 
         return login;
@@ -267,6 +280,11 @@ public class APIRequests {
         public String name;
         @JsonProperty("party_hash")
         public String partyHash;
+        @JsonProperty("creator")
+        public String creator;
+        @JsonProperty("market")
+        public String market;
+
         @JsonProperty("tracks")
         public List<Track> tracks;
         @JsonProperty("user")
@@ -325,10 +343,16 @@ public class APIRequests {
         public String email;
 
         @JsonProperty("identities")
-        public String[] identities;
+        public Identity[] identities;
+
+        @JsonProperty("premium")
+        public boolean premium;
 
         @JsonProperty("parties")
         public List<Party> parties;
+
+        @JsonProperty("notes")
+        public String notes;
     }
 
     public static class User implements Serializable
@@ -338,6 +362,36 @@ public class APIRequests {
 
         @JsonProperty("email")
         public String email;
+    }
+
+    public static class Identity implements  Serializable
+    {
+        @JsonProperty("product")
+        public String product;
+
+        @JsonProperty("user_id")
+        public int userId;
+
+        @JsonProperty("uid")
+        public String uid;
+
+        @JsonProperty("created_at")
+        public String createdAt;
+
+        @JsonProperty("updated_at")
+        public String updatedAt;
+
+        @JsonProperty("image_url")
+        public String imageUrl;
+
+        @JsonProperty("provider")
+        public String provider;
+
+        @JsonProperty("id")
+        public int id;
+
+        @JsonProperty("market")
+        public String market;
     }
 
     public static class Application implements Serializable

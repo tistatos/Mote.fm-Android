@@ -11,7 +11,41 @@ public class WebSocketRailsChannel {
 	private String channelName;
 	private String token;
 	private WebSocketRailsDispatcher dispatcher;
-	
+
+    public WebSocketRailsChannel(String channelName, String authToken, String userEmail, WebSocketRailsDispatcher dispatcher, boolean isPrivate)
+    {
+        String eventName = null;
+        if (isPrivate)
+            eventName = "websocket_rails.subscribe_private";
+        else
+            eventName = "websocket_rails.subscribe";
+
+        this.channelName = channelName;
+        this.dispatcher = dispatcher;
+
+        List<Object> frame = new ArrayList<Object>();
+        frame.add(eventName);
+
+        Map<String, Object> data = new HashMap<String, Object>();
+
+        Map<String, Object> info = new HashMap<String, Object>();
+        info.put("party_hash", channelName);
+        info.put("auth_token", authToken);
+        info.put("user_email", userEmail);
+
+        data.put("data", info);
+
+        frame.add(data);
+        frame.add(dispatcher.getConnectionId());
+
+        WebSocketRailsEvent event = new WebSocketRailsEvent(frame, null, null);
+
+        callbacks = new HashMap<String, List<WebSocketRailsDataCallback>>();
+
+        dispatcher.triggerEvent(event);
+
+    }
+
 	public WebSocketRailsChannel(String channelName, WebSocketRailsDispatcher dispatcher, boolean isPrivate)
 	{
         String eventName = null;

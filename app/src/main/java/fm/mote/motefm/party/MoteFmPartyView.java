@@ -26,7 +26,7 @@ public class MoteFmPartyView extends Activity {
     private static final String CLIENT_ID = "22a724c740fe4fe4a5edc45efd7e4ab6";
     // FIXME: Replace with your redirect URI
     private static final String REDIRECT_URI = "eriktest://mahtest";
-
+    private APIRequests.APIResponse user;
     private Player mPlayer;
     private MoteParty mParty;
     private APIRequests.Party party;
@@ -51,10 +51,23 @@ public class MoteFmPartyView extends Activity {
         TextView partyHash = (TextView) findViewById(R.id.party_hash);
 
         APIRequests.APIPartyResponse partyR = (APIRequests.APIPartyResponse)getIntent().getExtras().getSerializable("party");
+        user = (APIRequests.APIResponse)getIntent().getExtras().getSerializable("user");
         party = partyR.party;
         partyTitle.setText(party.name);
         partyHash.setText(party.partyHash);
 
+        if(user.user.identities.length != 0)
+        {
+            for(APIRequests.Identity ident : user.user.identities)
+            {
+                if(ident.provider == "spotify")
+                {
+                    //dostuff
+
+
+                }
+            }
+        }
         SpotifyAuthentication.openAuthWindow(CLIENT_ID, "token", REDIRECT_URI,
                 new String[]{"user-read-private", "streaming"}, null, this);
     }
@@ -72,20 +85,24 @@ public class MoteFmPartyView extends Activity {
                 @Override
                 public void onInitialized() {
                     mParty = new MoteParty(party.partyHash, mPlayer);
+                    mParty = new MoteParty(party.partyHash, mPlayer);
+                    //mParty = new MoteParty(party.partyHash, mPlayer, user.application.authenticationToken user.user.email);
 
                     if(mParty.connect())
                     {
                         Log.d("motefm", "WS Connected");
 
-                        mParty.subscribeParty(); //TODO: should be inside of initialized
+                        mParty.subscribeParty(user.application.authenticationToken, user.user.email); //TODO: should be inside of initialized
                         mParty.setPlaylist(party);
                         ListView view = (ListView) findViewById(R.id.tracklist);
 
                         mAdapter = new TrackAdapter(getBaseContext(), mParty.getPlaylist());
                         view.setAdapter(mAdapter);
                         mHandler.postDelayed(run, 100);
-
-                        mParty.playNextSong();
+                        if(mParty.getPlaylist().size() > 0)
+                        {
+                            mParty.playNextSong();
+                        }
                     }
                     else
                     {

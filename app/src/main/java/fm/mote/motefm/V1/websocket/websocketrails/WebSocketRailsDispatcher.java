@@ -1,6 +1,5 @@
 package fm.mote.motefm.V1.websocket.websocketrails;
 
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -142,7 +141,31 @@ public class WebSocketRailsDispatcher {
 	    
 	    return channel;
 	}
-	
+
+	public WebSocketRailsChannel subscribePrivate(String channelName) {
+
+	    if (channels.get(channelName) != null)
+	        return channels.get(channelName);
+
+	    WebSocketRailsChannel channel = new WebSocketRailsChannel(channelName, this, true);
+
+	    channels.put(channelName, channel);
+
+	    return channel;
+	}
+
+    public WebSocketRailsChannel subscribePrivate(String channelName, String authToken, String userEmail) {
+
+        if (channels.get(channelName) != null)
+            return channels.get(channelName);
+
+        WebSocketRailsChannel channel = new WebSocketRailsChannel(channelName, authToken, userEmail , this, true);
+
+        channels.put(channelName, channel);
+
+        return channel;
+    }
+
 	public void unsubscribe(String channelName) {
 	
 	    if (channels.get(channelName) == null)

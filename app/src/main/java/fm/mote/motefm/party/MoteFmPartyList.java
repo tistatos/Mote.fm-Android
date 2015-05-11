@@ -56,7 +56,7 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
         APIRequests.Party party = (APIRequests.Party)adapterView.getItemAtPosition(i);
 
         APIRequests.APIPartyResponse response = APIRequests.getPartyByHash(party.partyHash, user);
-        startParty(response);
+        startParty(response, user);
 
     }
 
@@ -67,14 +67,15 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
         APIRequests.APIPartyResponse response;
         response = APIRequests.createParty(partyName, user);
 
-        startParty(response);
+        startParty(response, user);
     }
 
-    private void startParty(APIRequests.APIPartyResponse party)
+    private void startParty(APIRequests.APIPartyResponse party, APIRequests.APIResponse user)
     {
         Intent partyI = new Intent(getBaseContext(), MoteFmPartyView.class);
         //FIXME: do call to API to get proper party object here
         partyI.putExtra("party", party);
+        partyI.putExtra("user", user);
         startActivity(partyI);
     }
 }

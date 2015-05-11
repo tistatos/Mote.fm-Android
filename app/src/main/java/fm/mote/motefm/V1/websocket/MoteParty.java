@@ -31,6 +31,7 @@ public class MoteParty implements
 
     private ArrayList<MoteSong> mChanges;
     private boolean mHasChanged;
+    private boolean mPlaying;
     // address to mote's websocket server
     private static final String MOTE_WS_SERVER = "http://10.0.2.2:3001/websocket";
 
@@ -49,6 +50,7 @@ public class MoteParty implements
         mSongs = new ArrayList<MoteSong>();
         mChanges = new ArrayList<MoteSong>();
         mHasChanged = false;
+        mPlaying = false;
     }
 
     public void setPlaylist(APIRequests.Party party)
@@ -122,9 +124,9 @@ public class MoteParty implements
     /**
      * subscribe to the event related to our party
      */
-    public void subscribeParty()
+    public void subscribeParty(String authToken, String userEmail)
     {
-        mSocket.SubscribeToParty(mPartyID);
+        mSocket.SubscribeToParty(mPartyID, authToken, userEmail);
         //FIXME: this should be its own class
         mSocket.AddCallback("new_track", new WebSocketRailsDataCallback() {
             @Override
@@ -238,6 +240,11 @@ public class MoteParty implements
         Collections.sort(mSongs);
         mChanges.clear();
         mHasChanged = false;
+        if(!mPlaying)
+        {
+            playNextSong();
+            mPlaying = true;
+        }
     }
 
     @Override

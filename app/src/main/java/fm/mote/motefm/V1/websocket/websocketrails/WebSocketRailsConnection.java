@@ -1,6 +1,5 @@
 package fm.mote.motefm.V1.websocket.websocketrails;
 
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;

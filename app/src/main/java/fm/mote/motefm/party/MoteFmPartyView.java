@@ -56,15 +56,14 @@ public class MoteFmPartyView extends Activity {
         partyTitle.setText(party.name);
         partyHash.setText(party.partyHash);
 
-        if(user.user.identities.length != 0)
+        if(user.user.identities.size() != 0)
         {
             for(APIRequests.Identity ident : user.user.identities)
             {
                 if(ident.provider == "spotify")
                 {
-                    //dostuff
-
-
+                    //If logged in user aldready authenticated the app, we should no
+                    //need to do it again
                 }
             }
         }
@@ -84,7 +83,6 @@ public class MoteFmPartyView extends Activity {
             mPlayer = spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                 @Override
                 public void onInitialized() {
-                    mParty = new MoteParty(party.partyHash, mPlayer);
                     mParty = new MoteParty(party.partyHash, mPlayer);
                     //mParty = new MoteParty(party.partyHash, mPlayer, user.application.authenticationToken user.user.email);
 

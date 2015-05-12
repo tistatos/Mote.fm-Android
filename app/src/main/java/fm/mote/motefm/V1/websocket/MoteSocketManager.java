@@ -58,7 +58,7 @@ public class MoteSocketManager{
     public void SubscribeToParty(String partyID, String authToken, String userEmail)
     {
         mPartyID = partyID;
-        mPartyChannel = mSocket.subscribe(partyID);
+        mPartyChannel = mSocket.subscribePrivate(partyID, authToken, userEmail);
     }
 
     /**

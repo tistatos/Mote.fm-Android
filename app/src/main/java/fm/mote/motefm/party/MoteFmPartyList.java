@@ -5,6 +5,7 @@ import fm.mote.motefm.V1.APIRequests;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -24,6 +25,10 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
+
         setContentView(R.layout.activity_mote_fm_party_list);
 
         TextView userText = (TextView) findViewById(R.id.txtv_welcome_user);
@@ -31,7 +36,7 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
         user = (APIRequests.APIResponse)getIntent().getExtras().getSerializable("user");
         userText.setText("Welcome, " + user.user.name);
 
-        List<APIRequests.Party> list = user.user.parties;
+        List<APIRequests.PartyList> list = user.user.parties;
         PartyAdapter adapter = new PartyAdapter(this, list);
         view.setAdapter(adapter);
         view.setOnItemClickListener(this);
@@ -53,7 +58,7 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        APIRequests.Party party = (APIRequests.Party)adapterView.getItemAtPosition(i);
+        APIRequests.PartyList party = (APIRequests.PartyList)adapterView.getItemAtPosition(i);
 
         APIRequests.APIPartyResponse response = APIRequests.getPartyByHash(party.partyHash, user);
         startParty(response, user);

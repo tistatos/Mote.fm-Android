@@ -129,6 +129,18 @@ public class WebSocketRailsDispatcher {
 		
 		return (channels.get(channelName) != null);
 	}
+
+    public WebSocketRailsChannel subscribe(String channelName, String authToken, String userEmail)
+    {
+        if (channels.get(channelName) != null)
+            return channels.get(channelName);
+
+        WebSocketRailsChannel channel = new WebSocketRailsChannel(channelName, authToken, userEmail, this, false);
+
+        channels.put(channelName, channel);
+
+        return channel;
+    }
 	
 	public WebSocketRailsChannel subscribe(String channelName) {
 		

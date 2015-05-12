@@ -28,12 +28,14 @@ public class WebSocketRailsChannel {
 
         Map<String, Object> data = new HashMap<String, Object>();
 
-        Map<String, Object> info = new HashMap<String, Object>();
+        Map<String, String> info = new HashMap<String, String>();
         info.put("party_hash", channelName);
         info.put("auth_token", authToken);
         info.put("user_email", userEmail);
 
-        data.put("data", info);
+        Map<String, Object> channel = new HashMap<String, Object>();
+        channel.put("channel", info);
+        data.put("data", channel);
 
         frame.add(data);
         frame.add(dispatcher.getConnectionId());

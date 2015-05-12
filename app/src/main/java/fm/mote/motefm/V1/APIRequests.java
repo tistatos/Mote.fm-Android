@@ -2,6 +2,7 @@ package fm.mote.motefm.V1;
 
 import android.util.Log;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -28,7 +29,8 @@ import java.util.Map;
  * Created by tistatos on 2014-12-17.
  */
 public class APIRequests {
-    private static final String API_URL = "http://10.0.2.2:3001";
+    //private static final String API_URL = "http://10.0.2.2:3001"; //emulator
+    private static final String API_URL = "http://130.236.133.12:3001"; //use if debugging on HW
     private static String errorMessage = "";
 
     private static String sendAuthedPostRequest(String url, APIResponse user, String jsondata)
@@ -242,7 +244,7 @@ public class APIRequests {
         APIPartyResponse party = null;
         try {
             party = om.readValue(response, new TypeReference<APIPartyResponse>() {});
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -254,24 +256,39 @@ public class APIRequests {
         return  errorMessage;
     }
 
+    @JsonIgnoreProperties("errors")
     public static class APIResponse implements Serializable
     {
         @JsonProperty("user")
         public UserLogin user;
         @JsonProperty("application")
         public Application application;
-        @JsonProperty("errors")
-        public String errors;
         @JsonProperty("notes")
         public boolean notes;
         @JsonProperty("success")
         public boolean success;
     }
+    public static class Errors implements Serializable
+    {
 
+    }
+
+
+    @JsonIgnoreProperties("errors")
     public static class APIPartyResponse extends APIResponse implements Serializable
     {
         @JsonProperty("party")
         public Party party;
+    }
+
+    public static class PartyList implements Serializable
+    {
+        @JsonProperty("name")
+        public String name;
+        @JsonProperty("party_hash")
+        public String partyHash;
+        @JsonProperty("creator")
+        public String creator;
     }
 
     public static class Party implements Serializable
@@ -280,11 +297,8 @@ public class APIRequests {
         public String name;
         @JsonProperty("party_hash")
         public String partyHash;
-        @JsonProperty("creator")
-        public String creator;
         @JsonProperty("market")
         public String market;
-
         @JsonProperty("tracks")
         public List<Track> tracks;
         @JsonProperty("user")
@@ -343,16 +357,13 @@ public class APIRequests {
         public String email;
 
         @JsonProperty("identities")
-        public Identity[] identities;
+        public List<Identity> identities;
 
         @JsonProperty("premium")
         public boolean premium;
 
         @JsonProperty("parties")
-        public List<Party> parties;
-
-        @JsonProperty("notes")
-        public String notes;
+        public List<PartyList> parties;
     }
 
     public static class User implements Serializable

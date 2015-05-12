@@ -27,6 +27,8 @@ public class MoteFmWelcome extends Activity {
         password.setTransformationMethod(new PasswordTransformationMethod());
 
         // Only for debugging FIXME
+        password.setText("testings");
+        ((EditText)findViewById(R.id.txt_user)).setText("tistatos@gmail.com");
          StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
          StrictMode.setThreadPolicy(policy);
 

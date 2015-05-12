@@ -17,11 +17,11 @@ import fm.mote.motefm.V1.APIRequests;
  */
 public class PartyAdapter extends BaseAdapter{
 
-    protected List<APIRequests.Party> parties;
+    protected List<APIRequests.PartyList> parties;
     Context context;
     LayoutInflater inflater;
 
-    public PartyAdapter(Context context, List<APIRequests.Party> list)
+    public PartyAdapter(Context context, List<APIRequests.PartyList> list)
     {
         parties = list;
         context = context;
@@ -49,7 +49,7 @@ public class PartyAdapter extends BaseAdapter{
         TextView name = (TextView)myView.findViewById(R.id.party_name);
         TextView hash = (TextView)myView.findViewById(R.id.party_hash);
 
-        APIRequests.Party party = parties.get(i);
+        APIRequests.PartyList party = parties.get(i);
         name.setText(party.name);
         hash.setText(party.partyHash);
 

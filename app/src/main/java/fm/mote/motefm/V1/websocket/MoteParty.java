@@ -76,6 +76,7 @@ public class MoteParty implements
     public void playNextSong()
     {
         mSpotify.play(getNextSong().getSpotifyURI());
+        mPlaying = true;
     }
 
     /**
@@ -240,6 +241,8 @@ public class MoteParty implements
         Collections.sort(mSongs);
         mChanges.clear();
         mHasChanged = false;
+
+        //this is when first song is added
         if(!mPlaying)
         {
             playNextSong();

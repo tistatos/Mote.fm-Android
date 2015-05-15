@@ -26,6 +26,7 @@ public class MoteFmPartyView extends Activity {
     private static final String CLIENT_ID = "22a724c740fe4fe4a5edc45efd7e4ab6";
     // FIXME: Replace with your redirect URI
     private static final String REDIRECT_URI = "eriktest://mahtest";
+    private APIRequests.APIPartyResponse mPartyR;
     private APIRequests.APIResponse user;
     private Player mPlayer;
     private MoteParty mParty;
@@ -50,9 +51,9 @@ public class MoteFmPartyView extends Activity {
         TextView partyTitle = (TextView) findViewById(R.id.party_name);
         TextView partyHash = (TextView) findViewById(R.id.party_hash);
 
-        APIRequests.APIPartyResponse partyR = (APIRequests.APIPartyResponse)getIntent().getExtras().getSerializable("party");
+        mPartyR = (APIRequests.APIPartyResponse)getIntent().getExtras().getSerializable("party");
         user = (APIRequests.APIResponse)getIntent().getExtras().getSerializable("user");
-        party = partyR.party;
+        party = mPartyR.party;
         partyTitle.setText(party.name);
         partyHash.setText(party.partyHash);
 
@@ -90,7 +91,7 @@ public class MoteFmPartyView extends Activity {
                     {
                         Log.d("motefm", "WS Connected");
 
-                        mParty.subscribeParty(user.application.authenticationToken, user.user.email); //TODO: should be inside of initialized
+                        mParty.subscribeParty(mPartyR.application.authenticationToken, user.user.email); //TODO: should be inside of initialized
                         mParty.setPlaylist(party);
                         ListView view = (ListView) findViewById(R.id.tracklist);
 
@@ -100,6 +101,7 @@ public class MoteFmPartyView extends Activity {
                         if(mParty.getPlaylist().size() > 0)
                         {
                             mParty.playNextSong();
+
                         }
                     }
                     else

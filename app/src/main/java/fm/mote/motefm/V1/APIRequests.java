@@ -29,8 +29,8 @@ import java.util.Map;
  * Created by tistatos on 2014-12-17.
  */
 public class APIRequests {
-    //private static final String API_URL = "http://10.0.2.2:3001"; //emulator
-    private static final String API_URL = "http://130.236.133.12:3001"; //use if debugging on HW
+    private static final String API_URL = "http://10.0.2.2:3001"; //emulator
+    //private static final String API_URL = "http://130.236.133.12:3001"; //use if debugging on HW
     private static String errorMessage = "";
 
     private static String sendAuthedPostRequest(String url, APIResponse user, String jsondata)

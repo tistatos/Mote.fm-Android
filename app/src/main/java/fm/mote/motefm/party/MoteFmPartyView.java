@@ -84,8 +84,8 @@ public class MoteFmPartyView extends Activity {
             mPlayer = spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                 @Override
                 public void onInitialized() {
+                    //Creates party
                     mParty = new MoteParty(party.partyHash, mPlayer);
-                    //mParty = new MoteParty(party.partyHash, mPlayer, user.application.authenticationToken user.user.email);
 
                     if(mParty.connect())
                     {
@@ -100,14 +100,15 @@ public class MoteFmPartyView extends Activity {
                         mHandler.postDelayed(run, 100);
                         if(mParty.getPlaylist().size() > 0)
                         {
+                            //If there is a song on the party already, start playing
                             mParty.playNextSong();
-
                         }
                     }
                     else
                     {
                         Log.e("motefm", "could not connect to WS");
                     }
+                    //spotify stuff
                     mPlayer.addConnectionStateCallback(mParty);
                     mPlayer.addPlayerNotificationCallback(mParty);
                 }

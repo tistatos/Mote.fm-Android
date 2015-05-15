@@ -22,6 +22,7 @@ public class MoteFmWelcome extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.mote_fm_welcome);
+        //create stars for passwordfield
         EditText password = (EditText) findViewById(R.id.txt_password);
         password.setTypeface(Typeface.DEFAULT);
         password.setTransformationMethod(new PasswordTransformationMethod());
@@ -29,8 +30,9 @@ public class MoteFmWelcome extends Activity {
         // Only for debugging FIXME
         password.setText("testings");
         ((EditText)findViewById(R.id.txt_user)).setText("tistatos@gmail.com");
-         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-         StrictMode.setThreadPolicy(policy);
+        //TODO requests to backend has to be programmed into another thread
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         final Button login = (Button)findViewById(R.id.btn_login);
 
@@ -53,6 +55,7 @@ public class MoteFmWelcome extends Activity {
         });
     }
 
+    //Sends login request to server
     private APIRequests.APIResponse login()
     {
         String email = ((EditText) findViewById(R.id.txt_user)).getText().toString();
@@ -60,6 +63,7 @@ public class MoteFmWelcome extends Activity {
         return APIRequests.loginRequest(email, password);
     }
 
+    //show error messages
     private String getLoginError()
     {
         String error;

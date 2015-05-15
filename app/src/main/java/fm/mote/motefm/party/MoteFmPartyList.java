@@ -25,17 +25,20 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Debug thing, API-requests has to be done on its own thread
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
 
         setContentView(R.layout.activity_mote_fm_party_list);
 
+        //show user's name
         TextView userText = (TextView) findViewById(R.id.txtv_welcome_user);
         ListView view = (ListView) findViewById(R.id.lst_party);
         user = (APIRequests.APIResponse)getIntent().getExtras().getSerializable("user");
         userText.setText("Welcome, " + user.user.name);
 
+        //List all the parties this user owns
         List<APIRequests.PartyList> list = user.user.parties;
         PartyAdapter adapter = new PartyAdapter(this, list);
         view.setAdapter(adapter);
@@ -43,7 +46,6 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
 
         Button startParty = (Button) findViewById(R.id.btn_start_party);
         startParty.setOnClickListener(this);
-
     }
 
     @Override
@@ -58,8 +60,8 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        //Return to previous party
         APIRequests.PartyList party = (APIRequests.PartyList)adapterView.getItemAtPosition(i);
-
         APIRequests.APIPartyResponse response = APIRequests.getPartyByHash(party.partyHash, user);
         startParty(response, user);
 
@@ -67,6 +69,8 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
 
     @Override
     public void onClick(View view) {
+        //start new party
+        //TODO client-side check for emptrystring party
         TextView partyNameTextView = (TextView)findViewById(R.id.txt_new_party_name);
         String partyName = partyNameTextView.getText().toString();
         APIRequests.APIPartyResponse response;
@@ -78,7 +82,6 @@ public class MoteFmPartyList extends Activity implements AdapterView.OnItemClick
     private void startParty(APIRequests.APIPartyResponse party, APIRequests.APIResponse user)
     {
         Intent partyI = new Intent(getBaseContext(), MoteFmPartyView.class);
-        //FIXME: do call to API to get proper party object here
         partyI.putExtra("party", party);
         partyI.putExtra("user", user);
         startActivity(partyI);
